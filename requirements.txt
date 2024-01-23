@@ -8,4 +8,3 @@ tensorflow==2.12.0
 tensorflow-probability==0.20.1
 cairosvg
 pillow
-cx_Freeze

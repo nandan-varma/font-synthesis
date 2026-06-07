@@ -9,5 +9,9 @@ predictions
 venv
 img
 __pycache__
-/_main.py
+*.pyc
+*.egg-info/
+dist/
 build/
+.DS_Store
+.env

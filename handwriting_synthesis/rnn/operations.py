@@ -1,3 +1,5 @@
+import numpy as np
+import tensorflow as tf
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
@@ -7,10 +9,36 @@ from tensorflow.python.ops import control_flow_ops
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import tensor_array_ops
 from tensorflow.python.ops import variable_scope as vs
-from tensorflow.python.ops.rnn import _maybe_tensor_shape_from_tensor
-from tensorflow.python.ops.rnn_cell_impl import _concat, assert_like_rnncell
-from tensorflow.python.util import is_in_graph_mode
 from tensorflow.python.util import nest
+
+
+def _maybe_tensor_shape_from_tensor(shape):
+    if isinstance(shape, ops.Tensor):
+        return tensor_shape.TensorShape(None)
+    return shape
+
+
+def _concat(prefix, suffix, static=False):
+    if isinstance(prefix, int):
+        p = constant_op.constant([prefix], dtype=dtypes.int32)
+    else:
+        p = array_ops.reshape(math_ops.cast(prefix, dtypes.int32), [-1])
+    if isinstance(suffix, tensor_shape.TensorShape):
+        s = constant_op.constant(suffix.as_list(), dtype=dtypes.int32)
+    elif isinstance(suffix, (list, tuple, np.ndarray)):
+        s = constant_op.constant(list(suffix), dtype=dtypes.int32)
+    else:
+        s = array_ops.reshape(math_ops.cast(suffix, dtypes.int32), [-1])
+    return array_ops.concat([p, s], 0)
+
+
+def assert_like_rnncell(cell_name, cell):
+    if not (hasattr(cell, 'state_size') and hasattr(cell, 'output_size')):
+        raise ValueError(f"'{cell_name}' must be an RNNCell (missing state_size or output_size).")
+
+
+def _is_in_graph_mode():
+    return not tf.executing_eagerly()
 
 
 def raw_rnn(cell, loop_fn, parallel_iterations=None, swap_memory=False, scope=None):
@@ -37,7 +65,7 @@ def raw_rnn(cell, loop_fn, parallel_iterations=None, swap_memory=False, scope=No
     # determined by the parent scope, or is set to place the cached
     # Variable using the same placement as for the rest of the RNN.
     with vs.variable_scope(scope or "rnn") as varscope:
-        if is_in_graph_mode.IS_IN_GRAPH_MODE():
+        if _is_in_graph_mode():
             if varscope.caching_device is None:
                 varscope.set_caching_device(lambda op: op.device)
 

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "font-synthesis"
+version = "0.1.0"
+description = "Handwriting synthesis: generate SVG and PDF from text"
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "matplotlib>=2.1.0",
+    "pandas>=0.22.0",
+    "scikit-learn>=0.19.1",
+    "scipy>=1.0.0",
+    "svgwrite>=1.1.12",
+    "tensorflow==2.12.0",
+    "tensorflow-probability==0.20.1",
+    "cairosvg",
+    "pillow",
+    "svglib",
+    "reportlab",
+]
+
+[project.scripts]
+font-synth = "main:main"
+font-synth-pdf = "pdf:main"
+font-synth-gui = "gui:main"

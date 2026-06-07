@@ -1,9 +1,13 @@
-model/data/raw/ascii
-model/data/raw/lineStrokes
-model/data/raw/original
-model/data/processed
-logs
-predictions
+model/data/raw/
+model/data/processed/
+model/checkpoint/
+logs/
+predictions/
+
+# large data archives (tracked separately or downloaded)
+*.tar.gz
+*.tgz
+*.tgz.zip
 
 .idea
 venv

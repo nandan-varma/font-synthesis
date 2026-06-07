@@ -1,12 +1,10 @@
+torch>=2.3
 numpy
-matplotlib>=2.1.0
-pandas>=0.22.0
-scikit-learn>=0.19.1
 scipy>=1.0.0
 svgwrite>=1.1.12
-tensorflow>=2.16
-tensorflow-probability>=0.24
-cairosvg
 pillow
-svglib
-reportlab
+
+# Optional — only needed for pdf.py and gui.py
+# cairosvg
+# svglib
+# reportlab

@@ -1,8 +1,13 @@
+import os
 import tkinter as tk
+from io import BytesIO
+
 from PIL import Image, ImageTk
 import cairosvg
-from io import BytesIO
-from handwriting_synthesis import Hand
+
+from handwriting import generate, draw_svg
+
+_SVG_FILE = "img/generated_handwriting.svg"
 
 
 class HandwritingApp:
@@ -18,19 +23,16 @@ class HandwritingApp:
         self.image_label = tk.Label(master)
         self.image_label.pack()
 
-        self.hand = Hand()
-
     def generate(self):
         text = self.text_entry.get()
-        lines = text.split("\n")
-        svg_filename = "img/generated_handwriting.svg"
-        self.hand.write(
-            filename=svg_filename,
-            lines=lines,
-            biases=[0.75] * len(lines),
-            styles=[12] * len(lines),
-        )
-        self.display_svg(svg_filename)
+        lines = [l for l in text.split("\n") if l]
+        if not lines:
+            return
+
+        os.makedirs("img", exist_ok=True)
+        strokes = generate(lines=lines, biases=[0.75] * len(lines))
+        draw_svg(strokes, lines, _SVG_FILE)
+        self.display_svg(_SVG_FILE)
 
     def display_svg(self, svg_filename):
         svg_data = cairosvg.svg2png(url=svg_filename)
